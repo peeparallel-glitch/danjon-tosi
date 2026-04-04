@@ -1,0 +1,138 @@
+:root {
+    --pc98-bg: #000;
+    --pc98-text: #fff;
+    --pc98-green: #00ff00;
+    --pc98-blue: #0088ff;
+    --pc98-border: #888;
+    --pc98-border-bright: #ccc;
+    --pc98-border-dark: #444;
+}
+
+body {
+    background-color: #111;
+    color: var(--pc98-text);
+    font-family: 'Courier New', Courier, monospace; /* PC-98っぽい等幅フォント */
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#game-container {
+    width: 800px;
+    height: 600px;
+    background-color: var(--pc98-bg);
+    border: 4px double var(--pc98-border);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    image-rendering: pixelated;
+    position: relative;
+    padding: 4px;
+}
+
+#visual-area {
+    flex: 2;
+    border: 2px solid var(--pc98-border-dark);
+    margin-bottom: 4px;
+    background-color: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#main-canvas {
+    width: 640px;
+    height: 320px;
+    display: block;
+    image-rendering: pixelated;
+}
+
+#lower-container {
+    flex: 1;
+    display: flex;
+    gap: 4px;
+}
+
+#message-window {
+    flex: 3;
+    border: 2px solid var(--pc98-border);
+    padding: 10px;
+    background-color: #000;
+    position: relative;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+}
+
+#message-text {
+    font-size: 1.2rem;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+#sidebar {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+#status-window {
+    flex: 1;
+    border: 2px solid var(--pc98-border);
+    padding: 8px;
+    font-size: 0.9rem;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+#command-menu {
+    flex: 2;
+    border: 2px solid var(--pc98-border);
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background-color: #000;
+}
+
+.command-btn {
+    background: #000;
+    border: 1px solid var(--pc98-border);
+    color: #fff;
+    padding: 8px;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: background 0.1s;
+}
+
+.command-btn:hover {
+    background: #111;
+    border-color: var(--pc98-green);
+    color: var(--pc98-green);
+}
+
+.command-btn:active {
+    background: var(--pc98-green);
+    color: #000;
+}
+
+/* scanlines effect */
+#game-container::after {
+    content: " ";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+    background-size: 100% 4px, 6px 100%;
+    pointer-events: none;
+    z-index: 10;
+}

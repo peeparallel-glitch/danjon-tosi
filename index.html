@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>レトロ・トーナメント・クロニクル</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- 上部：イベントCG/背景表示エリア -->
+        <div id="visual-area">
+            <canvas id="main-canvas" width="640" height="320"></canvas>
+        </div>
+
+        <div id="lower-container">
+            <!-- 下部：テキストウィンドウ -->
+            <div id="message-window">
+                <div id="message-text"></div>
+            </div>
+
+            <!-- 右側：ステータスおよびコマンドメニュー -->
+            <div id="sidebar">
+                <div id="status-window">
+                    <div class="status-item">DAY: <span id="current-day">1</span></div>
+                    <div class="status-item">NAME: <span id="p-name">HERO</span></div>
+                    <div class="status-item">HP: <span id="p-hp">100</span>/<span id="p-maxhp">100</span></div>
+                    <div class="status-item">MP: <span id="p-mp">20</span>/<span id="p-maxmp">20</span></div>
+                    <div class="status-item">ATK: <span id="p-atk">15</span></div>
+                    <div class="status-item">DEF: <span id="p-def">10</span></div>
+                </div>
+                <div id="command-menu">
+                    <!-- ボタンはJSで動的に生成・更新 -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
+</html>
