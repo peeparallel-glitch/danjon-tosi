@@ -11,20 +11,21 @@
 body {
     background-color: #111;
     color: var(--pc98-text);
-    font-family: 'Courier New', Courier, monospace; /* PC-98っぽい等幅フォント */
+    font-family: 'Courier New', Courier, monospace;
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    height: 100dvh; /* dvhを使用してアドレスバー分のはみ出しを防ぐ */
+    overflow: hidden; /* スクロール完全禁止 */
 }
 
 #game-container {
-    width: 100%;
-    max-width: 800px;
+    width: 100vw;
+    /* 常に4:3の比率を保ちつつ、画面内に収める */
+    max-width: calc(100dvh * 4 / 3);
     height: 100dvh;
-    max-height: 600px;
+    max-height: calc(100vw * 3 / 4);
     box-sizing: border-box;
     background-color: var(--pc98-bg);
     border: 4px double var(--pc98-border);
@@ -34,10 +35,14 @@ body {
     image-rendering: pixelated;
     position: relative;
     padding: 4px;
+    /* flexコンテナとしてのはみ出しを防止 */
+    overflow: hidden; 
 }
 
 #visual-area {
     flex: 2;
+    min-height: 0; /* Flexbox特有のコンテンツ依存サイズによるハミ出しを防止！ */
+    min-width: 0;
     border: 2px solid var(--pc98-border-dark);
     margin-bottom: 4px;
     background-color: #000;
@@ -50,8 +55,6 @@ body {
 #main-canvas {
     width: 100%;
     height: 100%;
-    max-width: 640px;
-    max-height: 320px;
     object-fit: contain;
     display: block;
     image-rendering: pixelated;
@@ -59,6 +62,8 @@ body {
 
 #lower-container {
     flex: 1;
+    min-height: 0; /* 同様に防止 */
+    min-width: 0;
     display: flex;
     gap: 4px;
 }
@@ -174,24 +179,20 @@ body {
 /* 横画面（ランドスケープ）時は画面の最大化 */
 @media screen and (orientation: landscape) and (max-height: 768px) {
     #game-container {
-        height: 100vh;
-        width: 133.33vh;
-        max-width: 100vw;
-        max-height: 75vw;
         border: none;
-        padding: 2px;
-        box-shadow: none;
+        padding: 4px;
     }
     
     #message-text {
-        font-size: 1.3rem;
+        font-size: 1.1rem; /* 少し小さくしてはみ出し防止 */
     }
     .command-btn {
-        font-size: 1.1rem;
-        padding: 10px;
+        font-size: 1rem;
+        padding: 6px; /* 余白を削って操作スペースを確保 */
     }
     #status-window {
-        font-size: 1rem;
+        font-size: 0.8rem;
+        padding: 4px;
     }
     #game-container::after {
         opacity: 0.3;
