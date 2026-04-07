@@ -30,7 +30,8 @@ body {
     background-color: var(--pc98-bg);
     border: 4px double var(--pc98-border);
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 4px;
     box-shadow: 0 0 20px rgba(0,0,0,0.8);
     image-rendering: pixelated;
     position: relative;
@@ -39,12 +40,29 @@ body {
     overflow: hidden; 
 }
 
+#left-column {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+    min-width: 0;
+}
+
+#right-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-height: 0;
+    min-width: 0;
+}
+
 #visual-area {
-    flex: 2;
-    min-height: 0; /* Flexbox特有のコンテンツ依存サイズによるハミ出しを防止！ */
+    flex: 3;
+    min-height: 0; 
     min-width: 0;
     border: 2px solid var(--pc98-border-dark);
-    margin-bottom: 4px;
     background-color: #000;
     overflow: hidden;
     display: flex;
@@ -60,16 +78,10 @@ body {
     image-rendering: pixelated;
 }
 
-#lower-container {
-    flex: 1;
-    min-height: 0; /* 同様に防止 */
-    min-width: 0;
-    display: flex;
-    gap: 4px;
-}
+
 
 #message-window {
-    flex: 3;
+    flex: 1;
     border: 2px solid var(--pc98-border);
     padding: 10px;
     background-color: #000;
@@ -83,12 +95,7 @@ body {
     white-space: pre-wrap;
 }
 
-#sidebar {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+
 
 #status-window {
     flex: 1;
