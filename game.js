@@ -65,6 +65,8 @@ const state = {
     },
     enemy: null,
     npc: null,
+    enemy: null,
+    npc: null,
     turn: 'player',
     messageQueue: [],
     isTyping: false,
@@ -560,4 +562,58 @@ function init() {
     loop();
 }
 
-window.onload = init;
+function checkIsMobile() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function initMobile() {
+    if (checkIsMobile()) {
+        // スマホの場合はタップでフルスクリーン＆横画面起動を促すオーバーレイを表示
+        const overlay = document.createElement('div');
+        overlay.id = 'mobile-start-overlay';
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100vw';
+        overlay.style.height = '100dvh';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.95)';
+        overlay.style.color = '#fff';
+        overlay.style.zIndex = '10000';
+        overlay.style.display = 'flex';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.textAlign = 'center';
+        overlay.style.fontSize = '1.5rem';
+        overlay.style.cursor = 'pointer';
+        overlay.innerHTML = '🎯 画面をタップしてGAME START<br><br><span style="font-size:1rem; color:#aaa;">(スマホに最適化されたフルスクリーン・横画面で起動します)</span>';
+        
+        document.body.appendChild(overlay);
+
+        overlay.addEventListener('click', async () => {
+            try {
+                // フルスクリーンリクエスト（Android Chrome等で画面回転ロックのために必須）
+                if (document.documentElement.requestFullscreen) {
+                    await document.documentElement.requestFullscreen();
+                } else if (document.documentElement.webkitRequestFullscreen) { /* iOS Safari等 */
+                    await document.documentElement.webkitRequestFullscreen();
+                }
+
+                // 画面を横向きに自動固定（サポートされているブラウザのみ）
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (err) {
+                console.warn("フルスクリーン・横画面固定が非対応またはブロックされました: ", err);
+            } finally {
+                // オーバーレイを消してゲーム処理を開始
+                overlay.remove();
+                init();
+            }
+        });
+    } else {
+        // PC等の場合はそのまま即ゲーム開始
+        init();
+    }
+}
+
+window.onload = initMobile;

@@ -116,9 +116,11 @@ body {
     flex-direction: column;
     gap: 4px;
     background-color: #000;
+    overflow-y: auto;
 }
 
 .command-btn {
+    flex-shrink: 0;
     background: #000;
     border: 1px solid var(--pc98-border);
     color: #fff;
