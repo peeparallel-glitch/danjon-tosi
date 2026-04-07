@@ -20,8 +20,8 @@ images.enemy.src = 'goblin.png';
 
 // Rivals Database
 const rivals = [
-    { name: 'ライバルのケン', hp: 80, maxHp: 80, atk: 12, def: 8, color: 'blue', intro: 'お前が噂の新入りか？手本を見せてやるよ！', win: 'ちっ、運が良かっただけだ！', lose: 'まだまだ修行が足りないな！' },
-    { name: '剣士のリナ', hp: 140, maxHp: 140, atk: 20, def: 15, color: 'red', intro: 'その意気込みは良し。全力で来なさい。', win: 'お見事。あなたの実力を認めます。', lose: 'もっと自分を磨くのね。' }
+    { name: 'ライバルのケン', hp: 80, maxHp: 80, atk: 12, def: 8, spd: 12, color: 'blue', intro: 'お前が噂の新入りか？手本を見せてやるよ！', win: 'ちっ、運が良かっただけだ！', lose: 'まだまだ修行が足りないな！' },
+    { name: '剣士のリナ', hp: 140, maxHp: 140, atk: 20, def: 15, spd: 18, color: 'red', intro: 'その意気込みは良し。全力で来なさい。', win: 'お見事。あなたの実力を認めます。', lose: 'もっと自分を磨くのね。' }
 ];
 
 // NPCs Database
@@ -46,12 +46,16 @@ const state = {
     tournamentDay: 5, // フェーズ3では5日目に大会実施
     player: {
         name: 'アルド',
+        lv: 1,
         hp: 100,
         maxHp: 100,
         mp: 20,
         maxMp: 20,
         atk: 15,
         def: 10,
+        spd: 10,
+        exp: 0,
+        expToNext: 30,
         gold: 100
     },
     flags: {
@@ -74,12 +78,16 @@ const state = {
 function updateStatusUI() {
     document.getElementById('current-day').innerText = state.currentDay;
     document.getElementById('p-name').innerText = state.player.name;
+    document.getElementById('p-lv').innerText = state.player.lv;
     document.getElementById('p-hp').innerText = state.player.hp;
     document.getElementById('p-maxhp').innerText = state.player.maxHp;
     document.getElementById('p-mp').innerText = state.player.mp;
     document.getElementById('p-maxmp').innerText = state.player.maxMp;
     document.getElementById('p-atk').innerText = state.player.atk;
     document.getElementById('p-def').innerText = state.player.def;
+    document.getElementById('p-spd').innerText = state.player.spd;
+    document.getElementById('p-exp').innerText = state.player.exp;
+    document.getElementById('p-gold').innerText = state.player.gold;
 }
 
 function showMessage(text) {
@@ -303,7 +311,7 @@ function goToArena() {
 function startBattle(mode) {
     state.location = 'battle';
     if (mode === 'monster') {
-        state.enemy = { name: '野生のゴブリン', hp: 50, maxHp: 50, atk: 9, def: 5 };
+        state.enemy = { name: '野生のゴブリン', hp: 50, maxHp: 50, atk: 9, def: 5, spd: 8 };
     }
     showMessage(`${state.enemy.name}が現れた！`);
     setBattleCommands();
@@ -359,6 +367,14 @@ function enemyTurn() {
     if (state.isReckless) { pDef = 0; state.isReckless = false; }
     if (state.isDefending) { pDef *= 2; state.isDefending = false; }
 
+    // 素早さの差による回避判定（相手より素早ければ回避率UP）
+    const evadeChance = Math.max(0, (state.player.spd - state.enemy.spd) * 3);
+    if (Math.random() * 100 < evadeChance) {
+        showMessage(`${state.enemy.name}の攻撃！ しかし素早く身をかわした！`);
+        setTimeout(setBattleCommands, 1500);
+        return;
+    }
+
     let damage = Math.max(1, state.enemy.atk - pDef);
     state.player.hp -= damage;
     updateStatusUI();
@@ -378,12 +394,55 @@ function winBattle() {
         state.flags.wonTournament = true;
         showMessage("おめでとう！ 大会優勝を果たした！");
     } else {
-        showMessage("勝利！ 金貨を手に入れた。");
-        state.player.gold += 30;
+        const gainedExp = 15;
+        const gainedGold = 30;
+        state.player.exp += gainedExp;
+        state.player.gold += gainedGold;
+        showMessage(`勝利！ 経験値${gainedExp}と、金貨${gainedGold}Gを手に入れた。`);
     }
     state.enemy = null;
     updateStatusUI();
-    setTimeout(goToTown, 2500);
+    setTimeout(checkLevelUp, 2000);
+}
+
+function checkLevelUp() {
+    if (state.player.exp >= state.player.expToNext) {
+        state.player.exp -= state.player.expToNext;
+        state.player.lv++;
+        
+        // ドラゴンクエスト風：レベルが上がるほど上昇幅の「上限（伸び代）」が増加するランダム上昇
+        const lv = state.player.lv;
+        const hpUp = Math.floor(Math.random() * 4) + 5 + Math.floor(Math.random() * (lv * 0.6)); // ベース5〜8 + Lvボーナス
+        const mpUp = Math.floor(Math.random() * 3) + 1 + Math.floor(Math.random() * (lv * 0.4)); // ベース1〜3 + Lvボーナス
+        const atkUp = Math.floor(Math.random() * 3) + 1 + Math.floor(Math.random() * (lv * 0.3)); // ベース1〜3 + Lvボーナス
+        const defUp = Math.floor(Math.random() * 2) + 1 + Math.floor(Math.random() * (lv * 0.3)); // ベース1〜2 + Lvボーナス
+        const spdUp = Math.floor(Math.random() * 2) + 1 + Math.floor(Math.random() * (lv * 0.2)); // ベース1〜2 + Lvボーナス
+
+        state.player.maxHp += hpUp;
+        state.player.hp = state.player.maxHp;
+        state.player.maxMp += mpUp;
+        state.player.mp = state.player.maxMp;
+        state.player.atk += atkUp;
+        state.player.def += defUp;
+        state.player.spd += spdUp;
+        
+        // 次のレベルアップまでの必要経験値を1.5倍に（緩やかな二次曲線）
+        state.player.expToNext = Math.floor(state.player.expToNext * 1.5);
+        
+        updateStatusUI();
+        
+        // メッセージを1行ずつ溜めて連続表示させる（RPG風の演出）
+        showMessage(`レベルアップ！ ${state.player.name}は LV${state.player.lv} になった！`);
+        showMessage(`最大HPが ${hpUp} あがった！`);
+        showMessage(`最大MPが ${mpUp} あがった！`);
+        showMessage(`攻撃力が ${atkUp} あがった！`);
+        showMessage(`防御力が ${defUp} あがった！`);
+        showMessage(`素早さが ${spdUp} あがった！ 体力が全回復した！`);
+        
+        setTimeout(() => checkLevelUp(), 2500); // 連続UPの確認（メッセージが裏で積まれる）
+    } else {
+        goToTown();
+    }
 }
 
 function loseBattle() {

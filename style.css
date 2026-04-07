@@ -155,31 +155,41 @@ body {
     z-index: 10;
 }
 
-/* --- 画面の向き制御 --- */
-
-#rotate-prompt {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background-color: #000;
-    color: #fff;
-    z-index: 9999;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    font-size: 1.2rem;
-    line-height: 1.5;
-}
-
-/* スマホ等（縦持ち時）はゲームを隠し、横に持つよう促す画面を出す */
+/* スマホ等（縦持ち時）は画面自体をCSSで強制的に90度回転し、横画面ゲームとして表示する */
 @media screen and (orientation: portrait) and (max-width: 768px) {
     #game-container {
-        display: none !important;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        
+        /* 回転後の16:9比率を計算 */
+        /* width基準の16:9 = height(100vw), width(177.78vw) */
+        width: 177.78vw;
+        height: 100vw;
+        /* もしスマホが極端に縦に短い場合（アスペクト比ストッパー） */
+        max-width: 100vh;
+        max-height: 56.25vh;
+        
+        transform: translate(-50%, -50%) rotate(90deg);
+        transform-origin: center center;
+        border: none;
+        box-shadow: none;
+        padding: 4px;
     }
-    #rotate-prompt {
-        display: flex;
+    
+    #message-text {
+        font-size: 1.1rem;
+    }
+    .command-btn {
+        font-size: 1rem;
+        padding: 6px;
+    }
+    #status-window {
+        font-size: 0.8rem;
+        padding: 4px;
+    }
+    #game-container::after {
+        opacity: 0.3;
     }
 }
 

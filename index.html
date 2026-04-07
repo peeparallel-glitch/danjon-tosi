@@ -8,13 +8,6 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="rotate-prompt">
-        <div>
-            <div style="font-size: 2rem; margin-bottom: 10px;">🔄</div>
-            端末を横向きにしてください<br>
-            <span style="font-size: 0.8rem; color: #aaa;">Please rotate your device to landscape mode.</span>
-        </div>
-    </div>
     <div id="game-container">
         <!-- 左側：イベントCG/背景 と テキストウィンドウ -->
         <div id="left-column">
@@ -31,10 +24,14 @@
             <div id="status-window">
                 <div class="status-item">DAY: <span id="current-day">1</span></div>
                 <div class="status-item">NAME: <span id="p-name">HERO</span></div>
+                <div class="status-item">LV: <span id="p-lv">1</span></div>
                 <div class="status-item">HP: <span id="p-hp">100</span>/<span id="p-maxhp">100</span></div>
                 <div class="status-item">MP: <span id="p-mp">20</span>/<span id="p-maxmp">20</span></div>
                 <div class="status-item">ATK: <span id="p-atk">15</span></div>
                 <div class="status-item">DEF: <span id="p-def">10</span></div>
+                <div class="status-item">SPD: <span id="p-spd">10</span></div>
+                <div class="status-item">EXP: <span id="p-exp">0</span></div>
+                <div class="status-item">GOLD: <span id="p-gold">100</span>G</div>
             </div>
             <div id="command-menu">
                 <!-- ボタンはJSで動的に生成・更新 -->
