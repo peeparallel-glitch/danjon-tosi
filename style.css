@@ -143,45 +143,35 @@ body {
     z-index: 10;
 }
 
-/* スマホ等（縦持ち時）の強制横画面（ランドスケープ）表示 */
+/* --- 画面の向き制御 --- */
+
+#rotate-prompt {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background-color: #000;
+    color: #fff;
+    z-index: 9999;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 1.2rem;
+    line-height: 1.5;
+}
+
+/* スマホ等（縦持ち時）はゲームを隠し、横に持つよう促す画面を出す */
 @media screen and (orientation: portrait) and (max-width: 768px) {
     #game-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        
-        /* 縦持ちの画面幅（100vw）をゲームの高さとし、4:3の幅を計算 */
-        height: 100vw;
-        width: 133.33vw; /* 100vw * 4/3 */
-        
-        /* 稀な画面比率で溢れないためのストッパー */
-        max-width: 100vh;
-        max-height: 75vh;
-        
-        transform: translate(-50%, -50%) rotate(90deg);
-        transform-origin: center center;
-        border: none;
+        display: none !important;
     }
-
-    /* スマホ画面用に少し文字を大きく */
-    #message-text {
-        font-size: 1.3rem;
-    }
-    .command-btn {
-        font-size: 1.1rem;
-        padding: 10px;
-    }
-    #status-window {
-        font-size: 1rem;
-    }
-
-    /* スマホ時はスキャンラインを薄くするか消す */
-    #game-container::after {
-        opacity: 0.3;
+    #rotate-prompt {
+        display: flex;
     }
 }
 
-/* スマホ等（横持ち時）の画面最大化 */
+/* 横画面（ランドスケープ）時は画面の最大化 */
 @media screen and (orientation: landscape) and (max-height: 768px) {
     #game-container {
         height: 100vh;
@@ -190,6 +180,7 @@ body {
         max-height: 75vw;
         border: none;
         padding: 2px;
+        box-shadow: none;
     }
     
     #message-text {
