@@ -1,201 +1,354 @@
 :root {
-    --pc98-bg: #000;
-    --pc98-text: #fff;
-    --pc98-green: #00ff00;
-    --pc98-blue: #0088ff;
-    --pc98-border: #888;
-    --pc98-border-bright: #ccc;
-    --pc98-border-dark: #444;
+    --bg-color: #0d0d0d;
+    --panel-bg: rgba(30, 30, 35, 0.9);
+    --accent-color: #d4af37; /* Gold */
+    --text-color: #e0e0e0;
+    --border-color: #444;
+    --font-main: 'Outfit', 'Inter', 'Noto Sans JP', sans-serif;
 }
 
 body {
-    background-color: #111;
-    color: var(--pc98-text);
-    font-family: 'Courier New', Courier, monospace;
     margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100dvh; /* dvhを使用してアドレスバー分のはみ出しを防ぐ */
-    overflow: hidden; /* スクロール完全禁止 */
-}
-
-#game-container {
-    width: 100vw;
-    /* 常に4:3の比率を保ちつつ、画面内に収める */
-    max-width: calc(100dvh * 4 / 3);
-    height: 100dvh;
-    max-height: calc(100vw * 3 / 4);
-    box-sizing: border-box;
-    background-color: var(--pc98-bg);
-    border: 4px double var(--pc98-border);
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 0 20px rgba(0,0,0,0.8);
-    image-rendering: pixelated;
-    position: relative;
-    padding: 4px;
-    /* flexコンテナとしてのはみ出しを防止 */
-    overflow: hidden; 
-}
-
-#visual-area {
-    flex: 2;
-    min-height: 0; /* Flexbox特有のコンテンツ依存サイズによるハミ出しを防止！ */
-    min-width: 0;
-    border: 2px solid var(--pc98-border-dark);
-    margin-bottom: 4px;
-    background-color: #000;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-main);
     overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100vh;
 }
 
-#main-canvas {
+#app {
+    width: 1024px;
+    height: 768px;
+    background: #1a1a1a;
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--accent-color);
+    position: relative;
+}
+
+header {
+    background: linear-gradient(to right, #2c3e50, #000);
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+#game-status {
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+main {
+    flex: 1;
+    position: relative;
+    background: #111;
+    overflow: hidden;
+}
+
+#map-world-container {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    overflow: auto;
+    position: relative;
+    -webkit-overflow-scrolling: touch; /* Smooth scroll for iOS */
+}
+
+#map-scroll-viewport {
+    width: 4000px;
+    height: 2000px;
+    position: relative;
+    background: #1a1a1a;
+}
+
+#game-canvas {
     display: block;
     image-rendering: pixelated;
 }
 
-#lower-container {
-    flex: 1;
-    min-height: 0; /* 同様に防止 */
-    min-width: 0;
-    display: flex;
-    gap: 4px;
+#ui-overlay {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    pointer-events: none;
 }
 
-#message-window {
-    flex: 3;
-    border: 2px solid var(--pc98-border);
-    padding: 10px;
-    background-color: #000;
-    position: relative;
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+#info-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--accent-color);
+    padding: 20px;
+    border-radius: 8px;
+    width: 280px;
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-#message-text {
-    font-size: 1.2rem;
-    line-height: 1.4;
-    white-space: pre-wrap;
+#info-panel.hidden {
+    transform: translateX(120%);
+    opacity: 0;
 }
 
-#sidebar {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+#info-panel h2 {
+    margin: 0 0 5px 0;
+    color: var(--accent-color);
+    font-size: 1.4rem;
 }
 
-#status-window {
-    flex: 1;
-    border: 2px solid var(--pc98-border);
-    padding: 8px;
+#territory-resources {
     font-size: 0.9rem;
-    background-color: #000;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
-#command-menu {
-    flex: 2;
-    border: 2px solid var(--pc98-border);
-    padding: 4px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    background-color: #000;
-}
-
-.command-btn {
-    background: #000;
-    border: 1px solid var(--pc98-border);
+    margin-bottom: 5px;
     color: #fff;
+    font-weight: bold;
+}
+
+.sub-stats {
+    font-size: 0.8rem;
+    color: #ccc;
+    background: rgba(0,0,0,0.3);
+    padding: 5px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+}
+
+.actions {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.action-group {
+    display: flex;
+    gap: 5px;
+}
+
+button {
+    flex: 1;
     padding: 8px;
-    text-align: left;
+    background: #444;
+    color: white;
+    border: 1px solid var(--accent-color);
     cursor: pointer;
-    font-family: inherit;
-    font-size: 1rem;
-    transition: background 0.1s;
+    font-weight: bold;
+    transition: background 0.2s;
 }
 
-.command-btn:hover {
+button:hover {
+    background: var(--accent-color);
+    color: black;
+}
+
+footer {
+    height: 60px;
     background: #111;
-    border-color: var(--pc98-green);
-    color: var(--pc98-green);
+    padding: 10px 20px;
+    border-top: 1px solid #333;
 }
 
-.command-btn:active {
-    background: var(--pc98-green);
-    color: #000;
+#message-log {
+    font-size: 0.9rem;
+    color: #aaa;
+    line-height: 1.4;
 }
 
-/* scanlines effect */
-#game-container::after {
-    content: " ";
+#btn-商人 {
+    background: #5d4037; /* Brownish */
+}
+#btn-buy-rice, #btn-sell-rice, #btn-buy-arms {
+    background: #006064; /* Tealish */
+}
+#btn-cancel-merchant {
+    background: #424242;
+}
+
+#title-screen, #select-screen {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
-    background-size: 100% 4px, 6px 100%;
-    pointer-events: none;
-    z-index: 10;
-}
-
-/* --- 画面の向き制御 --- */
-
-#rotate-prompt {
-    display: none;
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background-color: #000;
-    color: #fff;
-    z-index: 9999;
+    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
+    background: radial-gradient(circle, #2c3e50 0%, #000 100%);
+    z-index: 10;
+}
+
+.title-logo {
+    font-size: 5rem;
+    color: var(--accent-color);
+    text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+    margin-bottom: 50px;
+    font-weight: bold;
+    letter-spacing: 10px;
+}
+
+#general-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 20px;
+    width: 80%;
+}
+
+.general-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #444;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+}
+
+.general-card:hover, .general-card.selected {
+    border-color: var(--accent-color);
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-5px);
+}
+
+.general-card h3 {
+    margin: 0 0 10px 0;
+    color: var(--accent-color);
+}
+
+.general-card p {
+    margin: 5px 0;
+    font-size: 0.8rem;
+    color: #ccc;
+}
+
+.large-btn {
+    padding: 15px 40px;
     font-size: 1.2rem;
-    line-height: 1.5;
+    background: linear-gradient(to bottom, #d4af37, #b8860b);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transition: transform 0.2s;
 }
 
-/* スマホ等（縦持ち時）はゲームを隠し、横に持つよう促す画面を出す */
-@media screen and (orientation: portrait) and (max-width: 768px) {
-    #game-container {
-        display: none !important;
-    }
-    #rotate-prompt {
-        display: flex;
-    }
+.large-btn:hover {
+    transform: scale(1.05);
+    background: #ffd700;
 }
 
-/* 横画面（ランドスケープ）時は画面の最大化 */
-@media screen and (orientation: landscape) and (max-height: 768px) {
-    #game-container {
-        border: none;
-        padding: 4px;
-    }
-    
-    #message-text {
-        font-size: 1.1rem; /* 少し小さくしてはみ出し防止 */
-    }
-    .command-btn {
-        font-size: 1rem;
-        padding: 6px; /* 余白を削って操作スペースを確保 */
-    }
-    #status-window {
-        font-size: 0.8rem;
-        padding: 4px;
-    }
-    #game-container::after {
-        opacity: 0.3;
-    }
+.selection-footer {
+    margin-top: 30px;
 }
+
+#turn-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+}
+
+#turn-text {
+    font-size: 5rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    text-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+    transform: scale(0.8);
+    animation: turnPop 1.5s ease-in-out forwards;
+}
+
+@keyframes turnPop {
+    0% { transform: scale(0.5); opacity: 0; }
+    20% { transform: scale(1.1); opacity: 1; }
+    80% { transform: scale(1.0); opacity: 1; }
+    100% { transform: scale(1.2); opacity: 0; }
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Minimap Styles */
+#minimap-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 500;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.minimap-content {
+    background: #222;
+    border: 2px solid var(--accent-color);
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    width: 90%;
+    max-width: 1100px;
+}
+
+.minimap-content h3 {
+    margin: 0 0 20px 0;
+    color: var(--accent-color);
+    font-size: 1.8rem;
+}
+
+.minimap-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    background: #000;
+    border: 1px solid #444;
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+#minimap-canvas {
+    display: block;
+    background: #111;
+}
+
+#btn-toggle-minimap {
+    background: #34495e;
+    margin-left: 10px;
+    padding: 5px 15px;
+    font-size: 0.8rem;
+}
+
+#btn-close-minimap {
+    padding: 10px 30px;
+    background: var(--accent-color);
+    color: #000;
+}
+
+
 

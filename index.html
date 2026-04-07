@@ -2,47 +2,93 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <title>レトロ・トーナメント・クロニクル</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天地の野望 - 戦国シミュレーション</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="rotate-prompt">
-        <div>
-            <div style="font-size: 2rem; margin-bottom: 10px;">🔄</div>
-            端末を横向きにしてください<br>
-            <span style="font-size: 0.8rem; color: #aaa;">Please rotate your device to landscape mode.</span>
-        </div>
-    </div>
-    <div id="game-container">
-        <!-- 上部：イベントCG/背景表示エリア -->
-        <div id="visual-area">
-            <canvas id="main-canvas" width="640" height="320"></canvas>
-        </div>
-
-        <div id="lower-container">
-            <!-- 下部：テキストウィンドウ -->
-            <div id="message-window">
-                <div id="message-text"></div>
+    <div id="app">
+        <header>
+            <h1>天地の野望</h1>
+            <div id="game-status" class="hidden">
+                <span id="current-year">1560年 1月</span>
+                <span id="player-resources">金: 1000 | 米: 1000</span>
+                <button id="btn-toggle-minimap">全体図</button>
             </div>
-
-            <!-- 右側：ステータスおよびコマンドメニュー -->
-            <div id="sidebar">
-                <div id="status-window">
-                    <div class="status-item">DAY: <span id="current-day">1</span></div>
-                    <div class="status-item">NAME: <span id="p-name">HERO</span></div>
-                    <div class="status-item">HP: <span id="p-hp">100</span>/<span id="p-maxhp">100</span></div>
-                    <div class="status-item">MP: <span id="p-mp">20</span>/<span id="p-maxmp">20</span></div>
-                    <div class="status-item">ATK: <span id="p-atk">15</span></div>
-                    <div class="status-item">DEF: <span id="p-def">10</span></div>
-                </div>
-                <div id="command-menu">
-                    <!-- ボタンはJSで動的に生成・更新 -->
+        </header>
+        <main>
+            <!-- Minimap Overlay -->
+            <div id="minimap-overlay" class="hidden">
+                <div class="minimap-content">
+                    <h3>日本全土図</h3>
+                    <div class="minimap-wrapper">
+                        <canvas id="minimap-canvas" width="1000" height="500"></canvas>
+                    </div>
+                    <button id="btn-close-minimap">閉じる</button>
                 </div>
             </div>
-        </div>
+            <div id="title-screen">
+                <div class="title-logo">天地の野望</div>
+                <button id="btn-start" class="large-btn">天下統一を志す</button>
+            </div>
+
+            <div id="select-screen" class="hidden">
+                <h2>武将選択</h2>
+                <div id="general-list"></div>
+                <div class="selection-footer">
+                    <button id="btn-confirm-select" class="large-btn">この武将で開始</button>
+                </div>
+            </div>
+
+            <div id="turn-overlay" class="hidden">
+                <div id="turn-text">1560年 1月</div>
+            </div>
+
+            <canvas id="battle-canvas" width="1024" height="768" class="hidden"></canvas>
+
+            <div id="map-world-container" class="hidden">
+                <div id="map-scroll-viewport">
+                    <canvas id="game-canvas" width="4000" height="2000"></canvas>
+                </div>
+            </div>
+            <div id="ui-overlay">
+                <div id="info-panel" class="hidden">
+                    <h2 id="territory-name">領地名</h2>
+                    <p id="territory-owner">領主: ---</p>
+                    <div id="territory-resources">兵士: 0 | 金: 0 | 米: 0</div>
+                    <div id="territory-stats" class="sub-stats">
+                        <span>開発: 0</span> | <span>治水: 0</span> | <span>商業: 0</span> | <span>民心: 0</span>
+                    </div>
+                    <div class="actions">
+                        <div class="action-group">
+                            <button id="btn-開墾">開墾</button>
+                            <button id="btn-治水">治水</button>
+                            <button id="btn-商売">商業</button>
+                            <button id="btn-施し">施し</button>
+                        </div>
+                        <div class="action-group">
+                            <button id="btn-徴兵">徴兵</button>
+                            <button id="btn-訓練">訓練</button>
+                            <button id="btn-武装">武装</button>
+                            <button id="btn-出陣">出陣</button>
+                        </div>
+                        <div id="merchant-actions" class="action-group hidden">
+                            <button id="btn-商人">商人</button>
+                        </div>
+                        <div id="merchant-menu" class="action-group hidden">
+                            <button id="btn-buy-rice">米買</button>
+                            <button id="btn-sell-rice">米売</button>
+                            <button id="btn-buy-arms">武器</button>
+                            <button id="btn-cancel-merchant">戻る</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer>
+            <div id="message-log">「天地の野望」へようこそ。天下を統一せよ。</div>
+        </footer>
     </div>
-    <script src="game.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
