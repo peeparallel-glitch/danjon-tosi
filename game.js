@@ -211,7 +211,8 @@ function goToTown() {
         { label: '周辺の人と話す', action: talkToNPCs },
         { label: '宿屋 (回復/翌日)', action: goToInn },
         { label: '訓練所 (能力強化)', action: goToTrainingCenter },
-        { label: '闘技場 (対戦する)', action: goToArena }
+        { label: '闘技場 (対戦する)', action: goToArena },
+        { label: 'システム (セーブ等)', action: goToSystemMenu }
     ]);
 }
 
@@ -478,6 +479,75 @@ function restUntilNextDay() {
     updateStatusUI();
     showMessage("次の日になった。コンディションは最高だ。");
     setTimeout(goToTown, 1500);
+}
+
+// ----------------------------------------------------
+// System (Save/Load)
+// ----------------------------------------------------
+
+function goToSystemMenu() {
+    state.location = 'town';
+    showMessage("どうしますか？");
+    setCommands([
+        { label: 'セーブする', action: () => showSaveLoadSlots(true) },
+        { label: 'ロードする', action: () => showSaveLoadSlots(false) },
+        { label: '戻る', action: goToTown }
+    ]);
+}
+
+function showSaveLoadSlots(isSaving) {
+    showMessage(isSaving ? "どこに記録しますか？" : "どこから再開しますか？");
+    const cmds = [];
+    for (let i = 1; i <= 5; i++) {
+        const dataStr = localStorage.getItem('tousin_save_' + i);
+        let label = `スロット${i}: なし`;
+        if (dataStr) {
+            try {
+                const parsed = JSON.parse(dataStr);
+                label = `スロット${i}: LV${parsed.player.lv} / DAY${parsed.currentDay}`;
+            } catch (e) {
+                label = `スロット${i}: 破損データ`;
+            }
+        }
+        cmds.push({
+            label: label,
+            action: () => isSaving ? saveGame(i) : loadGame(i)
+        });
+    }
+    cmds.push({ label: '戻る', action: goToSystemMenu });
+    setCommands(cmds);
+}
+
+function saveGame(slot) {
+    // 現在のstateをディープコピーしてメッセージ周りの状態をリセットして保存
+    const stateToSave = JSON.parse(JSON.stringify(state));
+    stateToSave.messageQueue = [];
+    stateToSave.isTyping = false;
+    localStorage.setItem('tousin_save_' + slot, JSON.stringify(stateToSave));
+    showMessage(`スロット${slot}に記録しました！`);
+    setTimeout(goToTown, 1500);
+}
+
+function loadGame(slot) {
+    const dataStr = localStorage.getItem('tousin_save_' + slot);
+    if (!dataStr) {
+        showMessage("そのスロットにデータはありません。");
+        setTimeout(() => showSaveLoadSlots(false), 1500);
+        return;
+    }
+    try {
+        const parsed = JSON.parse(dataStr);
+        Object.assign(state, parsed);
+        state.messageQueue = [];
+        state.isTyping = false;
+        updateStatusUI();
+        msgText.innerText = '';
+        showMessage(`スロット${slot}からデータを読み込みました。`);
+        setTimeout(goToTown, 1500);
+    } catch(e) {
+        showMessage("データの読み込みに失敗しました。");
+        setTimeout(() => showSaveLoadSlots(false), 1500);
+    }
 }
 
 function init() {

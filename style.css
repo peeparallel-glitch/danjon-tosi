@@ -101,7 +101,7 @@ body {
     flex: 1;
     border: 2px solid var(--pc98-border);
     padding: 8px;
-    font-size: 0.9rem;
+    font-size: 1rem; /* コマンドと同じサイズに統一 */
     background-color: #000;
     display: flex;
     flex-direction: column;
@@ -185,7 +185,7 @@ body {
         padding: 6px;
     }
     #status-window {
-        font-size: 0.8rem;
+        font-size: 1rem; /* コマンドと同じサイズに統一 */
         padding: 4px;
     }
     #game-container::after {
@@ -208,7 +208,7 @@ body {
         padding: 6px; /* 余白を削って操作スペースを確保 */
     }
     #status-window {
-        font-size: 0.8rem;
+        font-size: 1rem; /* コマンドと同じサイズに統一 */
         padding: 4px;
     }
     #game-container::after {
